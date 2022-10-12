@@ -50,18 +50,18 @@ p "The weather in the next hour will be: " + next_hour_weather
 
 
 next_twelve_hours = hourly_data_array[1..12]
-any_precipitation = false # starting with assumption of no rain
+will_rain = false # starting with assumption of no rain
 
 next_twelve_hours.each do |this_hour_hash|
-  precip_prob = this_hour_hash.fetch("precipProbability")
-  if precip_prob > 0.10
-    any_precipitation = true
-    precip_time = Time.at(this_hour_hash.fetch("time"))
-    seconds_from_now = precip_time - Time.now
-    hours_from_now = seconds_from_now / 60 / 60
-
-    puts "In #{hours_from_now.round} hours, there is a #{(precip_prob * 100).round}% chance of precipitation."
+  rain_prob = this_hour_hash.fetch("precipProbability")
+  if rain_prob > 0.10
+    will_rain = true
+    break
   end
 end
 
-
+if will_rain
+  p "You might want to carry an umbrella!"
+else
+  p "You probably won't need an umbrella today."
+end
