@@ -42,7 +42,26 @@ ds_parsed_data = JSON.parse(raw_ds_data)
 current_temp = ds_parsed_data.fetch("currently").fetch("temperature")
 p "The current temperature is: " + current_temp.to_s + " degrees F"
 
-next_hour_weather = ds_parsed_data.fetch("hourly").fetch("data")[1].fetch("summary")
+hourly_data_array = ds_parsed_data.fetch("hourly").fetch("data")
+next_hour_weather = hourly_data_array[1].fetch("summary")
 p "The weather in the next hour will be: " + next_hour_weather
+
+# Check next 12 hours if precipitation probability is greater than 10%
+
+
+next_twelve_hours = hourly_data_array[1..12]
+any_precipitation = false # starting with assumption of no rain
+
+next_twelve_hours.each do |this_hour_hash|
+  precip_prob = this_hour_hash.fetch("precipProbability")
+  if precip_prob > 0.10
+    any_precipitation = true
+    precip_time = Time.at(this_hour_hash.fetch("time"))
+    seconds_from_now = precip_time - Time.now
+    hours_from_now = seconds_from_now / 60 / 60
+
+    puts "In #{hours_from_now.round} hours, there is a #{(precip_prob * 100).round}% chance of precipitation."
+  end
+end
 
 
